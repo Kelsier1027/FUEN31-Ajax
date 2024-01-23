@@ -1,0 +1,59 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	<div class="container-fluid" id="body"></div>
+}
+@section Scripts {
+	<script src='@Url.Content("~/js/travel.js")'></script>
+
+	<script>
+		// 找到 body 節點
+		var body = document.getElementById("body");
+
+		// 從 travel.js 讀取資料
+		var cities = spots;
+		console.log(cities)
+
+		// 新增一個節點，用於儲存迴圈生成的標籤
+		var node = document.createElement("div");
+		node.className = " row m-2 p-2 container-fluid";
+
+		// 遍歷 Section 數組
+		spots.CommonFormat.Section.forEach(spot => {
+			// 新增一個標籤，用於顯示資料
+			var div = document.createElement("div");
+			div.className = "card m-2 p-0";
+			div.style = "width: 18rem;";
+			// 檢查是否有圖片
+			if (spot.file && spot.file.img && spot.file.img.length > 0) {
+				// 打印第一張圖片的 URL
+				console.log("First Image: " + spot.file.img[0].text);
+				var img = spot.file.img[0].text;
+			}
+			// 插入html至div
+			div.innerHTML = `
+							<ul class="list-group list-group-flush ">
+								<li class="list-group-item  text-bg-secondary ">${(spot.CAT1)}</li>
+								<li class="list-group-item text-bg-light">${(spot.CAT2)}</li>
+							</ul>
+							<img src="${img}" class="card-img-bottom rounded-0" alt="...">
+							<div class="card-body ">
+								<h5 class="card-title">${(spot.stitle)}</h5>
+								<p class="card-text overflow-auto" style="max-height: 200px;">${spot.xbody}</p>
+							</div>
+								`
+
+			// 將div新增到node
+			node.appendChild(div);
+
+		});
+
+		// 將node新增到body
+		body.appendChild(node);
+
+
+	</script>
+
+
+}
