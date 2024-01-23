@@ -1,0 +1,55 @@
+﻿@{
+	ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<form>
+	<div class="mb-3">
+		<label for="inputName" class="form-label">姓名 :</label>
+		<input type="input" class="form-control" id="inputName" aria-describedby="nameHelp" placeholder="請輸入姓名">
+		<div id="nameHelp" class="form-text"></div>
+	</div>
+	<div class="mb-3">
+		<label for="inputEmail" class="form-label">電子郵件 :</label>
+		<input type="email" class="form-control" id="inputEmail" placeholder="請輸入">
+	</div>
+	<div class="mb-3">
+		<label for="exampleInputPassword1" class="form-label">年紀 :</label>
+		<input type="input" class="form-control" id="exampleInputPassword1">
+	</div>
+	<button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+</form>
+
+@section Scripts {
+	<script>
+		var inputName = document.querySelector('#inputName');
+
+		inputName.addEventListener('keyup', async () => {
+			var keInName = inputName.value;
+			console.log(keInName)
+			const checkAccountNameUrl = `@Url.Content("~/Member/CheckAccountName")?name=${keInName}`;
+			const response = await fetch(checkAccountNameUrl);
+			const datas = await response.json();
+
+			// 如果有重複的名字，就顯示錯誤訊息
+			if (datas) {
+				document.querySelector('#nameHelp').innerHTML = '此名稱已被使用';
+			} else {
+				document.querySelector('#nameHelp').innerHTML = '';
+			}
+			console.log(datas);
+		})
+
+
+	</script>
+
+
+
+
+
+
+}
+
+
+

@@ -10,11 +10,8 @@ namespace Homework1.Controllers
         private readonly MyDBContext _dbContext;
 
         public ApiController(MyDBContext dbDontext)
-
         {
-
 			_dbContext = dbDontext;
-
         }
         public IActionResult Index()
         {
@@ -42,6 +39,11 @@ namespace Homework1.Controllers
         {
 			return View();
 		}
+
+        public IActionResult Address()
+        {
+            return View();
+        }
  
     }
 }
