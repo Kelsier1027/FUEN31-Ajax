@@ -1,4 +1,5 @@
-﻿using Homework1.Models;
+﻿using Fuen31Site.Models.DTO;
+using Homework1.Models;
 using Homework1.Models.ViewModels;
 using Homework1.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -86,6 +87,51 @@ namespace Homework1.Controllers
 
             // return Content($"Hello {_user.Name}, {_user.Age}歲了,電子郵件是{_user.Email}");
             //return Content($"{_user.Avatar?.FileName}-{_user.Avatar?.Length}-{_user.Avatar?.ContentType}");
+        }
+        [HttpPost]
+        public IActionResult Spots([FromBody] SearchDTO _search)
+        {
+            //根據分類編號讀取景點資料
+            var spots = _search.categoryId == 0 ? _dbContext.SpotImagesSpots : _dbContext.SpotImagesSpots.Where(s => s.CategoryId == _search.categoryId);
+
+            //根據關鍵字搜尋
+            if (!string.IsNullOrEmpty(_search.keyword))
+            {
+                spots = spots.Where(s => s.SpotTitle.Contains(_search.keyword) || s.SpotDescription.Contains(_search.keyword));
+            }
+
+            //排序
+            switch (_search.sortBy)
+            {
+                case "spotTitle":
+                    spots = _search.sortType == "asc" ? spots.OrderBy(s => s.SpotTitle) : spots.OrderByDescending
+                        (s => s.SpotTitle);
+                    break;
+                case "categoryId":
+                    spots = _search.sortType == "asc" ? spots.OrderBy(s => s.CategoryId) : spots.OrderByDescending
+                       (s => s.CategoryId);
+                    break;
+                default:
+                    spots = _search.sortType == "asc" ? spots.OrderBy(s => s.SpotId) : spots.OrderByDescending
+                       (s => s.SpotId);
+                    break;
+            }
+
+            //分頁
+            int TotalCount = spots.Count(); //搜尋出來的資料總共有幾筆
+            int pageSize = _search.pageSize ?? 9; //每頁多少筆資料
+            int TotalPages = (int)Math.Ceiling((decimal)TotalCount / pageSize); //計算出總共有幾頁
+            int page = _search.Page ?? 1; //第幾頁
+
+            //取出分頁資料
+            spots = spots.Skip((page - 1) * pageSize).Take(pageSize);
+
+            //設計要回傳的資料格式
+            SpotsPagingDTO spotsPaging = new SpotsPagingDTO();
+            spotsPaging.TotalPages = TotalPages;
+            spotsPaging.SpotsReslut = spots.ToList();
+
+            return Json(spotsPaging);
         }
     }
 }

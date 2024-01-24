@@ -40,7 +40,7 @@
          "ObjectType": 3
       }
    ],
-   "UiHint": "surfacepro6\\sql2022dev.MyDB.dbo",
+   "UiHint": "g14\\sql2022dev.MyDB.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
