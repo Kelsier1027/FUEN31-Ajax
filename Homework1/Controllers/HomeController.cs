@@ -4,20 +4,8 @@ using System.Diagnostics;
 
 namespace Homework1.Controllers
 {
-    public class HomeController : Controller
-    {
-        private readonly MyDBContext _context;
-
-        public HomeController(MyDBContext context)
-
-        {
-
-            _context = context;
-
-        }
-
-        
-
+    public class HomeController : Controller 
+    { 
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
