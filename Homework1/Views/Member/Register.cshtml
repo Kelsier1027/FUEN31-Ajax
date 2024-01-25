@@ -2,6 +2,17 @@
 	ViewData["Title"] = "Register";
 }
 
+@section Styles{
+	<style>
+		.customalert{
+			margin-top: 10px;
+			height: 30px;
+			padding: 5px;
+		}
+
+	</style>
+}
+
 <h1>Register</h1>
 <div class="row">
 	<div class="col-3"></div>
@@ -10,7 +21,7 @@
 			<div class="mb-3">
 				<label for="userName" class="form-label">姓名：</label>
 				<input type="text" class="form-control" id="userName" name="Name">
-				<div class="alert alert-danger d-none" id="nameAlert"></div>
+				<div class="alert d-none customalert" id="nameAlert"></div>
 			</div>
 			<div class="mb-3">
 				<label for="UserEmail" class="form-label">電子郵件：</label>
@@ -51,7 +62,7 @@
 		const theForm = document.querySelector('#userForm');
 
 		// 呼叫API 來檢查是否有重複的名字
-		
+
 		async function checkName() {
 			const url = '@Url.Content("~/api/checkname")?name=' + txtName.value;
 			console.log(url);
@@ -59,14 +70,22 @@
 			console.log(response);
 			const data = await response.json();
 			console.log(data);
-			if (data == true) {
-				nameAlert.innerHTML = '此名字已經有人使用了';
-				btn.disabled = true;
-				nameAlert.classList.remove('d-none');
-			} else {
+			if (txtName.value == '') {
 				nameAlert.innerHTML = '';
 				btn.disabled = false;
 				nameAlert.classList.add('d-none');
+			} else if (data == true) {
+				nameAlert.innerHTML = '帳號已存在';
+				btn.disabled = true;
+				nameAlert.classList.remove('d-none');
+				nameAlert.classList.remove('alert-success');
+				nameAlert.classList.add('alert-danger');
+			} else {
+				nameAlert.innerHTML = '帳號可使用';
+				btn.disabled = false;
+				nameAlert.classList.remove('d-none');
+				nameAlert.classList.remove('alert-danger');
+				nameAlert.classList.add('alert-success');
 			}
 		}
 
