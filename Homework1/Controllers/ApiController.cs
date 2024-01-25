@@ -161,5 +161,10 @@ namespace Homework1.Controllers
 			return Json(false);
 		}
 
+        public IActionResult SpotsTitle(string keyword)
+        {
+            var spots = _dbContext.Spots.Where(s => s.SpotTitle.Contains(keyword)).Select(s => s.SpotTitle).Take(8);
+            return Json(spots);
+        }
     }
 }

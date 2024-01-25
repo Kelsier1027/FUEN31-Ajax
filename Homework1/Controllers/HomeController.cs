@@ -33,5 +33,10 @@ namespace Homework1.Controllers
         {
             return View();
         }
-    }
+
+		public IActionResult AutoComplete()
+		{
+			return View();
+		}
+	}
 }
