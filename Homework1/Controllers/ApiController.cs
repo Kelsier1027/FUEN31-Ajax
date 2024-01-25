@@ -3,6 +3,8 @@ using Homework1.Models;
 using Homework1.Models.ViewModels;
 using Homework1.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Homework1.Controllers
 {
@@ -76,8 +78,23 @@ namespace Homework1.Controllers
             member.FileName = fileName;
             member.FileData = imgByte;
 
-            //新增
-            _dbContext.Members.Add(member);
+			// 產生 salt 方法
+			member.Salt = Guid.NewGuid().ToString();
+
+			// 產生 hash 方法
+			member.Password = HashPassword(member.Password, member.Salt);
+
+			string HashPassword(string? password, string salt)
+			{
+				// 透過 SHA256 產生 Hash 值
+				using var sha256 = SHA256.Create();
+				var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password + salt));
+				return Convert.ToBase64String(bytes);
+			}
+
+
+			//新增
+			_dbContext.Members.Add(member);
             _dbContext.SaveChanges();
 
 
@@ -133,5 +150,16 @@ namespace Homework1.Controllers
 
             return Json(spotsPaging);
         }
+
+        public IActionResult CheckName(string name)
+        {
+			var member = _dbContext.Members.FirstOrDefault(m => m.Name == name);
+			if (member != null)
+            {
+				return Json(true);
+			}
+			return Json(false);
+		}
+
     }
 }
