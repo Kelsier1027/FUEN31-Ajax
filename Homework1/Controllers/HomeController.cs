@@ -38,5 +38,9 @@ namespace Homework1.Controllers
 		{
 			return View();
 		}
+        public IActionResult Shippers()
+        {
+            return View();
+        }
 	}
 }
