@@ -6,21 +6,41 @@
 		.currentPage {
 			background-color: lightgreen !important
 		}
+
+		.page-link {
+			height: 40px;
+			width: 40px;
+			justify-content: center;
+			align-items: center;
+			display: flex;
+		}
 	</style>
 
 }
 <h1>Spots</h1>
 <div class="row mb-3">
-	<div class="col-3"></div>
-	<div class="col-6">
+	<div class="col-3">
+	</div>
+	<div class="col-3">
+	</div>
+	<div class="col-3">
+	</div>
+	<div class="col-3">
+		<input type="search" id="inputKeyword" class="form-control" placeholder="景點搜尋" />
+	</div>
+</div>
+<div class="row mb-3">
+	<div class="col-3">
+	</div>
+	<div class="col-3">
 		<nav aria-label="Page navigation example">
 			<ul class="pagination">
 			</ul>
 		</nav>
-
 	</div>
 	<div class="col-3">
-		<input type="search" id="inputKeyword" class="form-control" placeholder="景點搜尋" />
+	</div>
+	<div class="col-3">
 	</div>
 </div>
 <div class="row row-cols-1 row-cols-md-3 g-4" id="spots">
@@ -29,7 +49,7 @@
 	<script>
 		const searchData = {
 			"categoryId": 0,
-			"keyword": "北投",
+			"keyword": "",
 			"page": 1,
 			"pageSize": 9,
 			"sortType": "asc",
@@ -39,6 +59,11 @@
 		const inpKeyword = document.querySelector('#inputKeyword');
 		const ulPaging = document.querySelector('.pagination');
 
+		let pagesGroupNumber = 1;
+		let numberOfPageItem = 10;
+		let numberOfPage = 0;
+		let PreviousButton = document.getElementById('PreviousButton');
+		let NextButton = document.getElementById('NextButton');
 
 		//根據searchData的條件，讀取景點資料
 		const loadSpots = async () => {
@@ -50,42 +75,77 @@
 				}
 			});
 			const datas = await response.json();
-
+			numberOfPage = datas.totalPages;
 			//產生分頁按鈕
 			let liPaging = "";
-			for (let i = 1, max = datas.totalPages; i <= max; i++) {
+			liPaging += `
+						<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
+								<a class="page-link" href="#"  aria-label="Previous" >
+						<span aria-hidden="true">&laquo;</span>
+						</a>
+						</li>
+						`;
+			for (let i = 1, numberOfPage = datas.totalPages; i <= numberOfPage; i++) {
 				if (i === searchData.page) {
-					liPaging += `<li class="page-item" onclick="pagingHandler(${i})"><a class="page-link currentPage" href="#">${i}</a></li>`;
+					liPaging += `<li class="page-item pageButton" onclick="pagingHandler(${i})" id="Page${i}" ><a class="page-link currentPage" href="#" >${i}</a></li>`;
 				} else {
-					liPaging += `<li class="page-item" onclick="pagingHandler(${i})"><a class="page-link" href="#">${i}</a></li>`;
+					liPaging += `<li class="page-item pageButton" onclick="pagingHandler(${i})" id="Page${i}" ><a class="page-link" href="#" >${i}</a></li>`;
 				}
 
 			}
+
+			liPaging += `
+						<li class="page-item" onclick="eventNextButton" id="NextButton">
+								<a class="page-link" href="#" aria-label="Next"  >
+						<span aria-hidden="true">&raquo;</span>
+						</a>
+						</li>
+						`;
+
 			ulPaging.innerHTML = liPaging;
 
+
+
+			PreviousButton = document.getElementById('PreviousButton');
+			NextButton = document.getElementById('NextButton');
+			if (PreviousButton) {
+				PreviousButton.addEventListener('click', eventPreviousButton);
+			}
+			if (NextButton) {
+				NextButton.addEventListener('click', eventNextButton);
+			}
+			// console.log(PreviousButton);
+			// console.log(NextButton);
+
+			//產生景點卡片
 			const cardSpots = datas.spotsReslut.map(spot => {
 				const { spotId, spotTitle, spotDescription, spotImage, address } = spot;
 				return (
 					`
-							<div class="col">
-							  <div class="card h-100">
-								  <img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
-								  <div class="card-body">
-									 <h5 class="card-title">${spotId} - ${spotTitle}</h5>
-									 <p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-								  </div>
-								  <div class="card-footer">
-									 <small class="text-body-secondary">${address}</small>
-								  </div>
-							  </div>
-							</div>
-
-							`
+												<div class="col">
+												<div class="card h-100">
+												<img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
+												<div class="card-body">
+												<h5 class="card-title">${spotId} - ${spotTitle}</h5>
+												<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+												</div>
+												<div class="card-footer">
+												<small class="text-body-secondary">${address}</small>
+												</div>
+												</div>
+												</div>
+												`
 				)
 			});
 
 			divSpots.innerHTML = cardSpots.join("");
+			ShowPageButton();
+			refreshPageNumberButton();
+
 		}
+		//載入景點
+		loadSpots();
+
 
 		//搜尋
 		inpKeyword.addEventListener('keydown', event => {
@@ -102,8 +162,59 @@
 			loadSpots();
 		}
 
-		//載入景點
-		loadSpots();
+		// 註冊上一頁按鈕事件
+		const eventPreviousButton = (event) => {
+			pagesGroupNumber -= 1;
+			refreshPageNumberButton();
+			ShowPageButton();
+		}
+		// 註冊下一頁按鈕事件
+		const eventNextButton = (event) => {
+			// console.log('eventNextButton');
+			pagesGroupNumber += 1;
+			refreshPageNumberButton();
+			ShowPageButton();
+		}
+
+		const refreshPageNumberButton = () => {
+			// 在不可切换时加上 disabled 类别
+
+			if (pagesGroupNumber == 1) {
+				PreviousButton.classList.add('d-none');
+			} else {
+				PreviousButton.classList.remove('d-none');
+			}
+
+			console.log(numberOfPage)
+			// 这里的逻辑判断需要确保当你在最后一组分页时禁用“下一页”按钮
+			if ((pagesGroupNumber * numberOfPageItem) > numberOfPage) {
+				NextButton.classList.add('d-none');
+				// console.log('add');
+			} else {
+				NextButton.classList.remove('d-none');
+				// console.log('remove');
+			}
+
+		}
+
+
+		const ShowPageButton = () => {
+
+			// 遍歷分頁按鈕，註冊事件
+			const pageButtons = document.querySelectorAll('.pageButton');
+			// 為序列超過十的分頁按鈕增加 隱藏樣式的 類別
+			if (pageButtons) {
+				pageButtons.forEach((pageButton, index) => {
+					pageButton.classList.remove('d-none');
+					// 為當前分頁組別以外的 分頁標籤 增加 隱藏樣式的 類別
+					if (index > (pagesGroupNumber * numberOfPageItem - 1) || index < ((pagesGroupNumber - 1) * numberOfPageItem)) {
+						pageButton.classList.add('d-none');
+					}
+				});
+
+			}
+		}
+
 	</script>
 }
 
