@@ -22,13 +22,6 @@ namespace Homework1.Controllers
         {
             return View();
         }
-        // 抓取資料庫資料，確認姓名是否存在
-        public IActionResult CheckAccountName(string name)
-        {
-            var isExist = _dbContext.Members.Any(x => x.Name == name);
-            var errorMsg = isExist ? "此姓名已存在" : "";
 
-            return Json(isExist);
-        }
     }
 }

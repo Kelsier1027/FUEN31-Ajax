@@ -43,7 +43,6 @@
 				<label for="userAvatar" class="form-label">頭像：</label>
 				<input type="file" class="form-control" id="userAvatar" name="avatar">
 			</div>
-
 			<button id="button1" type="submit" class="btn btn-primary">送出</button>
 		</form>
 		<div class="alert alert-info d-none" id="div1"></div>
@@ -60,7 +59,7 @@
 		const divInfo = document.querySelector('#div1');
 		const nameAlert = document.querySelector('#nameAlert');
 		const theForm = document.querySelector('#userForm');
-
+		let isNameAllow = false;
 		// 呼叫API 來檢查是否有重複的名字
 
 		async function checkName() {
@@ -74,18 +73,21 @@
 				nameAlert.innerHTML = '';
 				btn.disabled = false;
 				nameAlert.classList.add('d-none');
+				isNameAllow = false;
 			} else if (data == true) {
 				nameAlert.innerHTML = '帳號已存在';
 				btn.disabled = true;
 				nameAlert.classList.remove('d-none');
 				nameAlert.classList.remove('alert-success');
 				nameAlert.classList.add('alert-danger');
+				isNameAllow = false;
 			} else {
 				nameAlert.innerHTML = '帳號可使用';
 				btn.disabled = false;
 				nameAlert.classList.remove('d-none');
 				nameAlert.classList.remove('alert-danger');
 				nameAlert.classList.add('alert-success');
+				isNameAllow = true;
 			}
 		}
 

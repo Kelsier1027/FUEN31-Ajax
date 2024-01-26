@@ -1,0 +1,271 @@
+﻿@model Homework1.Models.ViewModels.MemberVm
+
+@{
+	ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<h4>Member</h4>
+<hr />
+<div class="row">
+	<div class="col-3"></div>
+	<div class="col-6">
+		<form asp-action="Register" id="userForm">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" id="Name" name="Name" required maxlength="30" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+				<div class="alert d-none customalert" id="nameAlert"></div>
+			</div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="Email" class="control-label"></label>
+				<input asp-for="Email" class="form-control" id="Email" name="Email" required type="email" />
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="Password" class="control-label"></label>
+				<input asp-for="Password" class="form-control" id="Password" name="Password" required minlength="6" maxlength="100" type="password" />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="ConfirmPassword" class="form-label">確認密碼：</label>
+				<input asp-for="ConfirmPassword" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required type="password" />
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="Age" class="control-label"></label>
+				<input asp-for="Age" class="form-control" id="Age" name="Age" type="number" min="0" max="150" />
+				<span asp-validation-for="Age" class="text-danger"></span>
+			</div>
+
+			<div class="mb-3 form-group">
+				<label asp-for="Avatar" class="form-label">頭像：</label>
+				<input asp-for="Avatar" type="file" class="form-control" id="Avatar" name="avatar" />
+				<span asp-validation-for="Avatar" class="text-danger"></span>
+			</div>
+
+			@* <div class="mb-3 form-group">
+			<label asp-for="Name" class="control-label"></label>
+			<input asp-for="Name" class="form-control" id="Name" />
+			<span asp-validation-for="Name" class="text-danger"></span>
+			<div class="alert d-none customalert" id="nameAlert"></div>
+			</div>
+			<div class="mb-3 form-group">
+			<label asp-for="Email" class="control-label"></label>
+			<input asp-for="Email" class="form-control" id="Email" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+			<div class="mb-3 form-group">
+			<label asp-for="Password" class="control-label"></label>
+			<input asp-for="Password" class="form-control" id="Password" required />
+			<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+			<div class="mb-3 form-group">
+			<label asp-for="ConfirmPassword" class="form-label">確認密碼：</label>
+			<input asp-for="ConfirmPassword" class="form-control" id="ConfirmPassword" name="ConfirmPassword" />
+			<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+			<div class="mb-3 form-group">
+			<label asp-for="Age" class="control-label"></label>
+			<input asp-for="Age" class="form-control" />
+			<span asp-validation-for="Age" class="text-danger" id="Age"></span>
+			</div>
+			<div class="mb-3 form-group">
+			<label asp-for="Avatar" class="form-label">頭像：</label>
+			<input asp-for="Avatar" type="file" class="form-control" id="Avatar" name="avatar">
+			<span asp-validation-for="Avatar" class="text-danger"></span>
+			</div> *@
+
+			<div class="form-group">
+				<input type="button" value="送出" class="btn btn-primary" id="button1" />
+			</div>
+		</form>
+		<div class="alert alert-info d-none" id="div1"></div>
+	</div>
+	<div class="col-3">
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+@section styles {
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+			crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+	<style>
+		.customalert {
+			margin-top: 10px;
+			height: 30px;
+			padding: 5px;
+		}
+
+		#userForm label.error {
+			font-size: 14px;
+			margin-left: 10px;
+			color: red;
+		}
+	</style>
+	<script>
+
+
+		$.validator.setDefaults({
+			submitHandler: function () {
+				alert("成功提交！");
+			}
+		});
+
+		$().ready(function () {
+			$("#userForm").validate({
+				rules: {
+					Name: {
+						required: true,
+						maxlength: 30
+					},
+					Email: {
+						required: true,
+						email: true
+					},
+					Age: {
+						range: [0, 150]
+					},
+					Password: {
+						required: true,
+						minlength: 6,
+						maxlength: 100
+					},
+					ConfirmPassword: {
+						required: true,
+						equalTo: "#Password"
+					}
+				},
+				messages: {
+					Name: {
+						required: "姓名為必填項目",
+						maxlength: "姓名長度不能超過100個字符"
+					},
+					Email: {
+						required: "電子郵件為必填項目",
+						email: "無效的電子郵件地址"
+					},
+					Age: {
+						range: "年齡必須在0至150之間"
+					},
+					Password: {
+						required: "密碼為必填項目",
+						minlength: "密碼至少需要6個字符",
+						maxlength: "密碼長度不能超過100個字符"
+					},
+					ConfirmPassword: {
+						required: "確認密碼為必填項目",
+						equalTo: "密碼與確認密碼不一致"
+					}
+				}
+			});
+		});
+
+	</script>
+}
+@section Scripts {
+	@{
+
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+
+	<script>
+		const btn = document.querySelector('#button1');
+		const txtName = document.querySelector('#Name');
+		const txtEmail = document.querySelector('#Email');
+		const txtAge = document.querySelector('#Age');
+		const divInfo = document.querySelector('#div1');
+		const nameAlert = document.querySelector('#nameAlert');
+		const theForm = document.querySelector('#userForm');
+
+		let isNameAllow = false;
+		// 呼叫API 來檢查是否有重複的名字
+
+		async function checkName() {
+			const url = '@Url.Content("~/api/checkname")?name=' + txtName.value;
+			console.log(url);
+			const response = await fetch(url);
+			console.log(response);
+			const data = await response.json();
+			console.log(data);
+			if (txtName.value == '') {
+				nameAlert.innerHTML = '';
+				btn.disabled = false;
+				nameAlert.classList.add('d-none');
+				isNameAllow = false;
+			} else if (data == true) {
+				nameAlert.innerHTML = '帳號已存在';
+				btn.disabled = true;
+				nameAlert.classList.remove('d-none');
+				nameAlert.classList.remove('alert-success');
+				nameAlert.classList.add('alert-danger');
+				isNameAllow = false;
+			} else {
+				nameAlert.innerHTML = '帳號可使用';
+				btn.disabled = false;
+				nameAlert.classList.remove('d-none');
+				nameAlert.classList.remove('alert-danger');
+				nameAlert.classList.add('alert-success');
+				isNameAllow = true;
+			}
+		}
+
+		txtName.addEventListener('keyup', (event) => {
+			console.log(txtName.value);
+			checkName(txtName.value);
+		})
+
+
+
+		btn.addEventListener('click', async (event) => {
+			// theForm.reportValidity();
+			// theForm.checkValidity();
+			// event.preventDefault(); //防止submit送出的功能
+			let formData = new FormData(theForm);
+			// console.log(formData);
+			// var username = formData.get('Name');
+			// var email = formData.get('Email');
+			// console.log(username); // 輸出填入的用戶名
+			// console.log(email); // 輸出填入的電子郵件地址
+
+			if (theForm.checkValidity()) {
+				console.log('表單驗證通過');
+				// 表單有效，進行自定義的提交處理
+				console.log('表單驗證通過，進行提交');
+
+				// 這裡寫您的提交邏輯
+				// 例如，使用 fetch API 進行 AJAX 提交
+				//透過FormData物件讀取表單中使用者輸入的資料
+				//將formData資料傳送到Server端
+				const url = '@Url.Content("~/api/register")';
+				const response = await fetch(url, {
+					method: 'POST',
+					body: formData
+				});
+				const datas = await response.text();
+				divInfo.innerHTML = datas;
+				divInfo.classList.remove('d-none');
+
+			} else {
+				console.log('表單驗證失敗');
+				// 表單無效，觸發 HTML5 表單驗證 UI
+				theForm.reportValidity();
+
+			}
+
+		})
+
+
+	</script>
+}
