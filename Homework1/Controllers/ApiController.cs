@@ -109,7 +109,7 @@ namespace Homework1.Controllers
         public IActionResult Spots([FromBody] SearchDTO _search)
         {
             //根據分類編號讀取景點資料
-            var spots = _search.categoryId == 0 ? _dbContext.SpotImagesSpots : _dbContext.SpotImagesSpots.Where(s => s.CategoryId == _search.categoryId);
+            var spots = _search.categoryId == 0 ? _dbContext.SpotImagesSpots : _dbContext.SpotImagesSpots.Where(s => s.CategoryId == _search.categoryId);//如果categoryId=0就讀取全部資料 //如果categoryId不等於0就讀取指定分類的資料 
 
             //根據關鍵字搜尋
             if (!string.IsNullOrEmpty(_search.keyword))

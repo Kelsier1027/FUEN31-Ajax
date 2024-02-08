@@ -17,13 +17,25 @@
 	</style>
 
 }
-<h1>Spots</h1>
+<h1>台北市景點</h1>
 <div class="row mb-3">
 	<div class="col-3">
+		<select class="form-select pageSizeSelector" aria-label="Default select pageSizeSelector">
+			<option value="9">每頁 9 筆資料</option>
+			<option value="12">每頁 12 筆資料</option>
+			<option value="15">每頁 15 筆資料</option>
+		</select>
 	</div>
 	<div class="col-3">
+		<select class="form-select sorter" aria-label="Default select sorter">
+			<option value="noUpper">景點編號升冪</option>
+			<option value="noDowner">景點編號降冪</option>
+			<option value="noUpper">景點名稱升冪</option>
+			<option value="noDowner">景點名稱降冪</option>
+		</select>
 	</div>
 	<div class="col-3">
+		
 	</div>
 	<div class="col-3">
 		<input type="search" id="inputKeyword" class="form-control" placeholder="景點搜尋" />
@@ -31,8 +43,9 @@
 </div>
 <div class="row mb-3">
 	<div class="col-3">
+		
 	</div>
-	<div class="col-3">
+	<div class="col-6 d-flex justify-content-center">
 		<nav aria-label="Page navigation example">
 			<ul class="pagination">
 			</ul>
@@ -40,13 +53,27 @@
 	</div>
 	<div class="col-3">
 	</div>
-	<div class="col-3">
+</div>
+<div class=" d-flex justify-content-center mb-4">
+	<div class="btn-group " role="group" aria-label="Basic">
+		<button type="button" class="btn btn-lg btn-outline-secondary">養生公園</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">藍色公路</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">歷史建築</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">藝文館所</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">單車遊蹤</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">戶外踏青</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">宗教信仰</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">其他</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">親子共遊</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">公共藝術</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary">春季活動</button>
 	</div>
 </div>
 <div class="row row-cols-1 row-cols-md-3 g-4" id="spots">
 </div>
 @section Scripts {
 	<script>
+		//景點搜尋條件
 		const searchData = {
 			"categoryId": 0,
 			"keyword": "",
@@ -55,15 +82,20 @@
 			"sortType": "asc",
 			"sortBy": ""
 		};
-		const divSpots = document.querySelector('#spots');
-		const inpKeyword = document.querySelector('#inputKeyword');
-		const ulPaging = document.querySelector('.pagination');
 
-		let pagesGroupNumber = 1;
-		let numberOfPageItem = 10;
-		let numberOfPage = 0;
-		let PreviousButton = document.getElementById('PreviousButton');
-		let NextButton = document.getElementById('NextButton');
+		const divSpots = document.querySelector('#spots'); //景點卡片容器
+		const inpKeyword = document.querySelector('#inputKeyword'); //搜尋輸入框
+		const ulPaging = document.querySelector('.pagination'); //分頁按鈕容器
+		// 選擇 sortor 下拉選單
+		const selectSorter = document.querySelector('.sorter');
+		// 選擇 pageSizeSelector 下拉選單
+		const selectPageSizeSelector = document.querySelector('.pageSizeSelector');
+
+		let pagesGroupNumber = 1; //分頁按鈕組別
+		let numberOfPageItem = 10; //每組分頁按鈕數量
+		let numberOfPage = 0; //總分頁數量
+		let PreviousButton = document.getElementById('PreviousButton'); //上一頁按鈕
+		let NextButton = document.getElementById('NextButton'); //下一頁按鈕
 
 		//根據searchData的條件，讀取景點資料
 		const loadSpots = async () => {
@@ -74,17 +106,18 @@
 					'Content-Type': 'application/json'
 				}
 			});
-			const datas = await response.json();
-			numberOfPage = datas.totalPages;
+			const datas = await response.json();//取得回傳的json資料
+			numberOfPage = datas.totalPages; //取得總分頁數量
 			//產生分頁按鈕
 			let liPaging = "";
 			liPaging += `
-						<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
-								<a class="page-link" href="#"  aria-label="Previous" >
-						<span aria-hidden="true">&laquo;</span>
-						</a>
-						</li>
-						`;
+														<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
+																<a class="page-link" href="#"  aria-label="Previous" >
+														<span aria-hidden="true">&laquo;</span>
+														</a>
+														</li>
+														`;
+			//產生分頁按鈕
 			for (let i = 1, numberOfPage = datas.totalPages; i <= numberOfPage; i++) {
 				if (i === searchData.page) {
 					liPaging += `<li class="page-item pageButton" onclick="pagingHandler(${i})" id="Page${i}" ><a class="page-link currentPage" href="#" >${i}</a></li>`;
@@ -95,12 +128,12 @@
 			}
 
 			liPaging += `
-						<li class="page-item" onclick="eventNextButton" id="NextButton">
-								<a class="page-link" href="#" aria-label="Next"  >
-						<span aria-hidden="true">&raquo;</span>
-						</a>
-						</li>
-						`;
+														<li class="page-item" onclick="eventNextButton" id="NextButton">
+																<a class="page-link" href="#" aria-label="Next"  >
+														<span aria-hidden="true">&raquo;</span>
+														</a>
+														</li>
+														`;
 
 			ulPaging.innerHTML = liPaging;
 
@@ -122,19 +155,19 @@
 				const { spotId, spotTitle, spotDescription, spotImage, address } = spot;
 				return (
 					`
-												<div class="col">
-												<div class="card h-100">
-												<img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
-												<div class="card-body">
-												<h5 class="card-title">${spotId} - ${spotTitle}</h5>
-												<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-												</div>
-												<div class="card-footer">
-												<small class="text-body-secondary">${address}</small>
-												</div>
-												</div>
-												</div>
-												`
+																				<div class="col">
+																				<div class="card h-100">
+																				<img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
+																				<div class="card-body">
+																				<h5 class="card-title">${spotId} - ${spotTitle}</h5>
+																				<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+																				</div>
+																				<div class="card-footer">
+																				<small class="text-body-secondary">${address}</small>
+																				</div>
+																				</div>
+																				</div>
+																				`
 				)
 			});
 
