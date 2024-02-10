@@ -30,12 +30,13 @@
 		<select class="form-select sorter" aria-label="Default select sorter">
 			<option value="noUpper">景點編號升冪</option>
 			<option value="noDowner">景點編號降冪</option>
-			<option value="noUpper">景點名稱升冪</option>
-			<option value="noDowner">景點名稱降冪</option>
+			<option value="nameUpper">景點名稱升冪</option>
+			<option value="nameDowner">景點名稱降冪</option>
+			<option value="categoryUpper">景點類別升冪</option>
+			<option value="categoryDowner">景點類別降冪</option>
 		</select>
 	</div>
 	<div class="col-3">
-		
 	</div>
 	<div class="col-3">
 		<input type="search" id="inputKeyword" class="form-control" placeholder="景點搜尋" />
@@ -43,7 +44,6 @@
 </div>
 <div class="row mb-3">
 	<div class="col-3">
-		
 	</div>
 	<div class="col-6 d-flex justify-content-center">
 		<nav aria-label="Page navigation example">
@@ -56,17 +56,17 @@
 </div>
 <div class=" d-flex justify-content-center mb-4">
 	<div class="btn-group " role="group" aria-label="Basic">
-		<button type="button" class="btn btn-lg btn-outline-secondary">養生公園</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">藍色公路</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">歷史建築</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">藝文館所</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">單車遊蹤</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">戶外踏青</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">宗教信仰</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">其他</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">親子共遊</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">公共藝術</button>
-		<button type="button" class="btn btn-lg btn-outline-secondary">春季活動</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="1">養生溫泉</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="2">藍色公路</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="3">歷史建築</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="4">藝文館所</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="5">單車遊蹤</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="6">戶外踏青</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="7">宗教信仰</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="8">其他</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="9">親子共遊</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="10">公共藝術</button>
+		<button type="button" class="btn btn-lg btn-outline-secondary" value="11">春季活動</button>
 	</div>
 </div>
 <div class="row row-cols-1 row-cols-md-3 g-4" id="spots">
@@ -82,6 +82,8 @@
 			"sortType": "asc",
 			"sortBy": ""
 		};
+		// 儲存景點類別列表 array
+		let categorys = [];
 
 		const divSpots = document.querySelector('#spots'); //景點卡片容器
 		const inpKeyword = document.querySelector('#inputKeyword'); //搜尋輸入框
@@ -97,6 +99,17 @@
 		let PreviousButton = document.getElementById('PreviousButton'); //上一頁按鈕
 		let NextButton = document.getElementById('NextButton'); //下一頁按鈕
 
+		// 取得景點類別
+		const loadCategory = async () => {
+			const response = await fetch('@Url.Content("~/api/spotCategories")');
+			const datas = await response.json();
+			categorys = datas;
+			// 印出所有的景點類別，檢查是否有取得資料
+			// console.log(categorys);
+		}
+
+
+
 		//根據searchData的條件，讀取景點資料
 		const loadSpots = async () => {
 			const response = await fetch('@Url.Content("~/api/spots")', {
@@ -111,12 +124,12 @@
 			//產生分頁按鈕
 			let liPaging = "";
 			liPaging += `
-														<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
-																<a class="page-link" href="#"  aria-label="Previous" >
-														<span aria-hidden="true">&laquo;</span>
-														</a>
-														</li>
-														`;
+										<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
+										<a class="page-link" href="#"  aria-label="Previous" >
+										<span aria-hidden="true">&laquo;</span>
+										</a>
+										</li>
+										`;
 			//產生分頁按鈕
 			for (let i = 1, numberOfPage = datas.totalPages; i <= numberOfPage; i++) {
 				if (i === searchData.page) {
@@ -128,12 +141,12 @@
 			}
 
 			liPaging += `
-														<li class="page-item" onclick="eventNextButton" id="NextButton">
-																<a class="page-link" href="#" aria-label="Next"  >
-														<span aria-hidden="true">&raquo;</span>
-														</a>
-														</li>
-														`;
+										<li class="page-item" onclick="eventNextButton" id="NextButton">
+										<a class="page-link" href="#" aria-label="Next"  >
+										<span aria-hidden="true">&raquo;</span>
+										</a>
+										</li>
+										`;
 
 			ulPaging.innerHTML = liPaging;
 
@@ -152,22 +165,26 @@
 
 			//產生景點卡片
 			const cardSpots = datas.spotsReslut.map(spot => {
-				const { spotId, spotTitle, spotDescription, spotImage, address } = spot;
+				const { spotId, spotTitle, spotDescription, spotImage, address, categoryId } = spot;
+				let categoryName = categorys.find(category => category.categoryId === categoryId).categoryName;
 				return (
 					`
-																				<div class="col">
-																				<div class="card h-100">
-																				<img src="${spotImage}" class="card-img-top" alt="${spotTitle}">
-																				<div class="card-body">
-																				<h5 class="card-title">${spotId} - ${spotTitle}</h5>
-																				<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-																				</div>
-																				<div class="card-footer">
-																				<small class="text-body-secondary">${address}</small>
-																				</div>
-																				</div>
-																				</div>
-																				`
+														<div class="col">
+														<div class="card h-100">
+														<div class="card-header text-bg-secondary">
+														類別:${categoryId}.${categoryName}
+														</div>
+														<img src="${spotImage}" class="card-img-top rounded-0" alt="${spotTitle}">
+														<div class="card-body">
+														<h5 class="card-title">${spotId} - ${spotTitle}</h5>
+														<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+														</div>
+														<div class="card-footer">
+														<small class="text-body-secondary">${address}</small>
+														</div>
+														</div>
+														</div>
+														`
 				)
 			});
 
@@ -177,6 +194,7 @@
 
 		}
 		//載入景點
+		loadCategory();
 		loadSpots();
 
 
@@ -188,6 +206,47 @@
 				loadSpots();
 			}
 		})
+
+		//排序 在 selectSorter 下拉選單被選擇時才觸發
+		selectSorter.addEventListener('change', event => {
+			if (event.target.value === "noUpper") {
+				searchData.sortBy = "";
+				searchData.sortType = "asc";
+			} else if (event.target.value === "noDowner") {
+				searchData.sortBy = "";
+				searchData.sortType = "desc";
+			} else if (event.target.value === "nameUpper") {
+				searchData.sortBy = "spotTitle";
+				searchData.sortType = "asc";
+			} else if (event.target.value === "nameDowner") {
+				searchData.sortBy = "spotTitle";
+				searchData.sortType = "desc";
+			} else if (event.target.value === "categoryUpper") {
+				searchData.sortBy = "categoryId";
+				searchData.sortType = "asc";
+			} else if (event.target.value === "categoryDowner") {
+				searchData.sortBy = "categoryId";
+				searchData.sortType = "desc";
+			}
+
+			loadSpots();
+		});
+
+		// 每頁筆數 在 selectPageSizeSelector 下拉選單被選擇時才觸發
+		selectPageSizeSelector.addEventListener('change', event => {
+			searchData.pageSize = event.target.value;
+			searchData.page = 1;
+			loadSpots();
+		});
+
+		// 為類別按鈕註冊事件
+		const btnGroup = document.querySelector('.btn-group');
+		btnGroup.addEventListener('click', event => {
+			// 按鈕被點擊時，取得按鈕的值
+			searchData.categoryId = event.target.value;
+			searchData.page = 1;
+			loadSpots();
+		});
 
 		//分頁
 		const pagingHandler = (page) => {
@@ -218,7 +277,7 @@
 				PreviousButton.classList.remove('d-none');
 			}
 
-			console.log(numberOfPage)
+			// console.log(numberOfPage)
 			// 这里的逻辑判断需要确保当你在最后一组分页时禁用“下一页”按钮
 			if ((pagesGroupNumber * numberOfPageItem) > numberOfPage) {
 				NextButton.classList.add('d-none');

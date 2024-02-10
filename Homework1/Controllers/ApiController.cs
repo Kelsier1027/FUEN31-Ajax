@@ -166,5 +166,13 @@ namespace Homework1.Controllers
             var spots = _dbContext.Spots.Where(s => s.SpotTitle.Contains(keyword)).Select(s => s.SpotTitle).Take(8);
             return Json(spots);
         }
-    }
+
+        // 取得景點分類對應的 categoryId
+        public IActionResult SpotCategories()
+        {
+			var categories = _dbContext.Categories.Select(c => new { c.CategoryId, c.CategoryName });
+			return Json(categories);
+		}
+       
+	}
 }
