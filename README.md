@@ -2,3 +2,4 @@
 >1.  Ajax Homework 1: https://localhost/homework/Homework1
 >1.  Ajax Homework 2: https://localhost:7079/member/register
 >1.  Ajax Homework 3: https://localhost:7079/home/register
+>1.  Ajax Homework 4: https://localhost:7079/Home/spots
