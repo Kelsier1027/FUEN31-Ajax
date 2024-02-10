@@ -124,12 +124,12 @@
 			//產生分頁按鈕
 			let liPaging = "";
 			liPaging += `
-										<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
-										<a class="page-link" href="#"  aria-label="Previous" >
-										<span aria-hidden="true">&laquo;</span>
-										</a>
-										</li>
-										`;
+																<li class="page-item switchButton" onclick="eventPreviousButton" id="PreviousButton">
+																<a class="page-link" href="#"  aria-label="Previous" >
+																<span aria-hidden="true">&laquo;</span>
+																</a>
+																</li>
+																`;
 			//產生分頁按鈕
 			for (let i = 1, numberOfPage = datas.totalPages; i <= numberOfPage; i++) {
 				if (i === searchData.page) {
@@ -141,12 +141,12 @@
 			}
 
 			liPaging += `
-										<li class="page-item" onclick="eventNextButton" id="NextButton">
-										<a class="page-link" href="#" aria-label="Next"  >
-										<span aria-hidden="true">&raquo;</span>
-										</a>
-										</li>
-										`;
+																<li class="page-item" onclick="eventNextButton" id="NextButton">
+																<a class="page-link" href="#" aria-label="Next"  >
+																<span aria-hidden="true">&raquo;</span>
+																</a>
+																</li>
+																`;
 
 			ulPaging.innerHTML = liPaging;
 
@@ -169,22 +169,22 @@
 				let categoryName = categorys.find(category => category.categoryId === categoryId).categoryName;
 				return (
 					`
-														<div class="col">
-														<div class="card h-100">
-														<div class="card-header text-bg-secondary">
-														類別:${categoryId}.${categoryName}
-														</div>
-														<img src="${spotImage}" class="card-img-top rounded-0" alt="${spotTitle}">
-														<div class="card-body">
-														<h5 class="card-title">${spotId} - ${spotTitle}</h5>
-														<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-														</div>
-														<div class="card-footer">
-														<small class="text-body-secondary">${address}</small>
-														</div>
-														</div>
-														</div>
-														`
+																				<div class="col">
+																				<div class="card h-100">
+																				<div class="card-header text-bg-secondary">
+																				類別:${categoryId}.${categoryName}
+																				</div>
+																				<img src="${spotImage}" class="card-img-top rounded-0" alt="${spotTitle}">
+																				<div class="card-body">
+																				<h5 class="card-title">${spotId} - ${spotTitle}</h5>
+																				<p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+																				</div>
+																				<div class="card-footer">
+																				<small class="text-body-secondary">${address}</small>
+																				</div>
+																				</div>
+																				</div>
+																				`
 				)
 			});
 
@@ -242,10 +242,28 @@
 		// 為類別按鈕註冊事件
 		const btnGroup = document.querySelector('.btn-group');
 		btnGroup.addEventListener('click', event => {
-			// 按鈕被點擊時，取得按鈕的值
-			searchData.categoryId = event.target.value;
-			searchData.page = 1;
-			loadSpots();
+			// 檢查當前按鈕是否已經是 active 狀態
+			if (event.target.classList.contains('active')) {
+				// 取消按鈕的 active 狀態
+				event.target.classList.remove('active');
+				searchData.categoryId = 0;
+				searchData.page = 1;
+				loadSpots();
+				return;
+			} else {
+				// 按下後將按鈕樣式改變為 active
+				const btns = btnGroup.querySelectorAll('button');
+				btns.forEach(btn => {
+					btn.classList.remove('active');
+				});
+				event.target.classList.add('active');
+				// 按鈕被點擊時，取得按鈕的值
+				searchData.categoryId = event.target.value;
+				searchData.page = 1;
+				loadSpots();
+				return;
+			}
+
 		});
 
 		//分頁
